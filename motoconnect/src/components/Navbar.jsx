@@ -31,7 +31,7 @@ function Navbar() {
             <Link to="/mechanicslist">Find Mechanics</Link>
           </li>
           <li>
-            <Link to="/meetups">Meetups</Link>
+            <Link to="/recommend">Add a Mechanic</Link>
           </li>
         </ul>
       </div>

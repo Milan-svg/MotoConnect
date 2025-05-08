@@ -16,7 +16,13 @@ function Signup() {
       if (!user) {
         dispatch(clearUser());
       } else {
-        dispatch(setUser(user));
+        dispatch(
+          setUser({
+            id: user.uid,
+            userName: user.displayName || "Anonymous",
+            email: user.email,
+          })
+        );
       }
     });
 

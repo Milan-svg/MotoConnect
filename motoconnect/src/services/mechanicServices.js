@@ -24,6 +24,22 @@ export async function getAllMechanics() {
 
 // id is outside the doc object which contains the data thats why we spreading ...doc after defining id.
 
+export async function addMechanic(mechanicData) {
+  const dataToSend = {
+    ...mechanicData,
+    available: false,
+    status: "pending",
+    timestamp: serverTimestamp(),
+  };
+  try {
+    await addDoc(collection(db, "pendingMechanics"), dataToSend);
+    return true;
+  } catch (err) {
+    console.error("error adding mechanic:", err);
+    return false; //true/false so that we can conditionally fire toasts.
+  }
+}
+
 export async function addMechanicRating(
   mechanicId,
   userId,
@@ -53,4 +69,34 @@ export async function getMechanicRatings(mechanicId) {
     ...doc.data(),
   }));
   return ratingList;
+}
+
+// helper func to fetch pending mechanics (for admins)
+
+export async function getPendingMechanics() {
+  const snapshot = await getDocs(collection(db, "pendingMechanics"));
+  return snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+}
+
+//func to approve a mechanic
+
+export async function approveMechanic(mechanic) {
+  const mechanicId = mechanic.id;
+  const mechanicData = { ...mechanic };
+  delete mechanicData.id;
+
+  const dataToSend = {
+    ...mechanicData,
+    available: true,
+    status: "approved",
+    approvedAt: serverTimestamp(),
+  };
+  try {
+    await addDoc(collection(db, "mechanics"), dataToSend);
+    await deleteDoc(doc(db, "pendingMechanics", mechanicId));
+    return true;
+  } catch (err) {
+    console.error("Error approving mechanic:", err);
+    return false;
+  }
 }

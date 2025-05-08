@@ -1,17 +1,62 @@
 import React, { useEffect, useState } from "react";
-import { getAllMechanics } from "../services/mechanicServices";
+import {
+  addMechanicRating,
+  getAllMechanics,
+} from "../services/mechanicServices";
 import { useParams } from "react-router-dom";
 import toast from "react-hot-toast";
 import { MechanicGallery } from "../components/MechanicGallery";
 import { ReviewCard } from "../components/ReviewCard";
 import { MechanicMap } from "../components/MechanicMap";
 import { getMechanicRatings } from "../services/mechanicServices";
+import { listenToAuthChanges } from "../firebase/authHelpers";
+import { useDispatch, useSelector } from "react-redux";
+import { setUser, clearUser } from "../redux/authSlice";
 function MechanicDetails() {
   const [mechanic, setMechanic] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [ratings, setRatings] = useState([]);
   const { id } = useParams(); // get id from url
 
+  // for adding reviews
+  const [rating, setRating] = useState(0);
+  const [review, setReview] = useState("");
+
+  const handleReviewSubmit = async (e) => {
+    e.preventDefault();
+    if (!mechanic || !user || !user.id || !user.userName) {
+      toast.error("User or Mechanic details not loaded yet!");
+      return;
+    }
+    if (rating !== undefined && review.trim()) {
+      try {
+        await addMechanicRating(
+          mechanic.id,
+          user.id,
+          user.userName,
+          rating,
+          review
+        );
+        toast.success("Review added successfully");
+
+        //clear the fields
+        setRating(0);
+        setReview("");
+        // re-fetch the ratings
+        const fetchedRatings = await getMechanicRatings(id);
+        setRatings(fetchedRatings);
+      } catch (err) {
+        console.log("error while adding rating", err.message);
+        toast.error("couldn't add the review :/");
+      }
+    } else {
+      toast.error("please provide a rating and a review!");
+    }
+  };
+  //checking for current user via redux state
+  const user = useSelector((state) => state.auth.user);
+
+  // fetching the said mechanic
   useEffect(() => {
     const getMechanic = async () => {
       try {
@@ -29,6 +74,7 @@ function MechanicDetails() {
     getMechanic();
   }, [id]);
 
+  //fetching all reviews. code says ratings, but its a list of review objects
   useEffect(() => {
     const getRatings = async () => {
       try {
@@ -70,7 +116,6 @@ function MechanicDetails() {
             className={`text-lg font-semibold ${
               mechanic.available ? "text-green-600" : "text-red-500"
             }`}
-            x
           >
             {mechanic.available ? "Available" : "Not available"}
           </p>
@@ -106,9 +151,44 @@ function MechanicDetails() {
               />
             ))
           ) : (
-            <p>Could'nt find ratings for this mechanic : /</p>
+            <p>Couldn't find ratings for this mechanic : /</p>
           )}
         </div>
+        {user && !ratings.find((rating) => rating.id === user.id) ? (
+          <div className=" flex flex-col bg-white text-black p-6 rounded-xl shadow-md mt-8 w-full">
+            <h3 className=" text-xl font-semibold mb-4 ">Write a Review</h3>
+            <form onSubmit={handleReviewSubmit}>
+              <input
+                type="text"
+                placeholder="write a review!"
+                className="rounded-lg "
+                value={review}
+                onChange={(e) => setReview(e.target.value)}
+              />
+              <div className="flex gap-1 mb-4">
+                {Array.from({ length: 5 }).map((_, index) => (
+                  <span
+                    key={index}
+                    onClick={() => setRating(index + 1)}
+                    className={`cursor-pointer text-2xl ${
+                      index < rating ? "text-yellow-400" : "text-gray-300"
+                    }`}
+                  >
+                    ★
+                  </span>
+                ))}
+              </div>
+              <button
+                type="submit"
+                className="bg-gray-700 text-white py-1 px-2 rounded-lg"
+              >
+                Submit
+              </button>
+            </form>
+          </div>
+        ) : (
+          <h2>you have already reviewed this Mechanic!</h2>
+        )}
       </div>
       {/* Map Section */}
       <div className="mb-10">
