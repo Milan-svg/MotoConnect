@@ -5,6 +5,7 @@ import {
   addDoc,
   doc,
   setDoc,
+  getDoc,
   updateDoc,
   deleteDoc,
   serverTimestamp,
@@ -80,6 +81,8 @@ export async function getPendingMechanics() {
 
 //func to approve a mechanic
 
+//okay we first extracted the id to use it for deleting mechanic from pending mechanics, then we delete the id from the mechanic object we just spread {...mechanic} / mechanicData, we pass this mechanicData along with other required stuff to addDoc in the mechanics collection
+
 export async function approveMechanic(mechanic) {
   const mechanicId = mechanic.id;
   const mechanicData = { ...mechanic };
@@ -100,3 +103,37 @@ export async function approveMechanic(mechanic) {
     return false;
   }
 }
+
+// to delete pendingMechanic
+
+export async function deleteMechanic(mechanicId) {
+  try {
+    await deleteDoc(doc(db, "pendingMechanics", mechanicId));
+    return true;
+  } catch (err) {
+    console.error("error deleting the pending mechanic:", err);
+    return false;
+  }
+}
+
+export const createUserDoc = async (user) => {
+  // takes user from firebase (listentoauthchnges)
+  if (!user?.uid) return;
+
+  const userRef = doc(db, "users", user.uid);
+  const userSnap = await getDoc(userRef);
+
+  if (!userSnap.exists()) {
+    const userData = {
+      id: user.uid,
+      email: user.email,
+      userName: user.displayName || user.email || "Anonymous",
+      role: "user", // default role
+    };
+
+    await setDoc(userRef, userData);
+    return userData;
+  }
+
+  return userSnap.data(); // return existing user
+};

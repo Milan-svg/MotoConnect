@@ -1,39 +1,26 @@
 import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { listenToAuthChanges, signupUser } from "../firebase/authHelpers";
+import {
+  createUserDoc,
+  listenToAuthChanges,
+  signupUser,
+} from "../firebase/authHelpers";
 import { useDispatch } from "react-redux";
 import { clearUser, setUser } from "../redux/authSlice";
 import AuthForm from "../components/AuthForm";
 import { toast } from "react-hot-toast";
 function Signup() {
-  const [error, setError] = useState("");
   const navigate = useNavigate();
 
   const dispatch = useDispatch();
 
-  useEffect(() => {
-    const unsubscribe = listenToAuthChanges((user) => {
-      if (!user) {
-        dispatch(clearUser());
-      } else {
-        dispatch(
-          setUser({
-            id: user.uid,
-            userName: user.displayName || "Anonymous",
-            email: user.email,
-          })
-        );
-      }
-    });
-
-    return () => unsubscribe();
-  }, []);
-
   const handleRegisterSubmit = async (email, password) => {
     try {
       const createdUser = await signupUser(email, password);
-      console.log("User created:", createdUser.user);
-      dispatch(setUser(createdUser.user));
+      //console.log("User created:", createdUser.user);
+      await createUserDoc(createdUser.user);
+      //createUserDoc me we pass user(from firebaseauth) & create user doc with id,email,role&username. dont need to dispatch anything to redux here cause were doing that in app.jsx. checking for user using listentoauthchanges, if auth detecs a user we dispatch to redux. in there if theres a doc avail, createuserdoc returns that and if there isnt, it makes one, and includes the standard id,email,role&username fields. thatswhy we use it in signup as user is being created so a doc needs to be made.
+      // 2 things being done here-> user doc create, and signupUser call, which triggers listentoauthchanges in the app.jsx, leading to successfull population of redux user.
       toast.success("Sign up was successfull");
       navigate("/");
     } catch (err) {

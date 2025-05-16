@@ -11,7 +11,7 @@ function RecommendMechanic() {
     reset,
     formState: { errors },
   } = useForm();
-  const { user } = useSelector((state) => state.auth);
+  const { user, isAuthReady } = useSelector((state) => state.auth);
   const [coords, setCoords] = useState({ lat: null, lng: null });
 
   useEffect(() => {
@@ -29,12 +29,13 @@ function RecommendMechanic() {
   }, []);
 
   const handleAddMechanic = async (data) => {
-    if (!user) {
+    if (!user?.id) {
       toast.error("You must be logged in to submit a mechanuc recommendation");
       return;
     }
     if (!coords.lat || !coords.lng) {
       toast.error("Location data not available yet");
+      return;
     }
     const mechanicData = {
       ...data,
@@ -42,8 +43,8 @@ function RecommendMechanic() {
       lng: coords.lng,
       servicesOffered: data.servicesOffered.split(", ").map((s) => s.trim()),
       submittedBy: {
-        id: user.uid,
-        userName: user.displayName || "anonymous",
+        id: user.id,
+        userName: user.userName || "anonymous",
       },
     };
     const isSuccess = await addMechanic(mechanicData);
@@ -52,6 +53,13 @@ function RecommendMechanic() {
       reset();
     }
   };
+  if (!isAuthReady) {
+    return (
+      <div className="flex justify-center items-center h-screen">
+        <p className="text-xl">Checking your login status...</p>
+      </div>
+    );
+  }
 
   return (
     <div className="flex items-center justify-center min-h-screen">

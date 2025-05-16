@@ -1,5 +1,3 @@
-import reactLogo from "./assets/react.svg";
-import viteLogo from "/vite.svg";
 import "./App.css";
 import Login from "./pages/login";
 import Navbar from "./components/Navbar";
@@ -14,19 +12,18 @@ import { useDispatch, useSelector } from "react-redux";
 import { useEffect } from "react";
 import { listenToAuthChanges } from "./firebase/authHelpers";
 import { clearUser, setUser } from "./redux/authSlice";
+import AdminDashboard from "./pages/AdminDashboard";
+import { createUserDoc } from "./services/mechanicServices";
+import { AdminRoute } from "./components/AdminRoute";
+import { NotAuthorized } from "./components/NotAuthorized";
 
 function App() {
   const dispatch = useDispatch();
   useEffect(() => {
-    const unsubscribe = listenToAuthChanges((user) => {
+    const unsubscribe = listenToAuthChanges(async (user) => {
       if (user) {
-        dispatch(
-          setUser({
-            id: user.uid,
-            userName: user.displayName || user.email || "Anonymous",
-            email: user.email,
-          })
-        );
+        const userDoc = await createUserDoc(user);
+        dispatch(setUser(userDoc));
       } else {
         dispatch(clearUser());
       }
@@ -55,11 +52,27 @@ function App() {
         <Route path="/mechanicslist" element={<MechanicsList />} />
         <Route path="/mechanic/:id" element={<MechanicDetails />} />
         <Route
+          path="/not-authorized"
+          element={
+            <ProtectedRoute>
+              <NotAuthorized />
+            </ProtectedRoute>
+          }
+        />
+        <Route
           path="/recommend"
           element={
             <ProtectedRoute>
               <RecommendMechanic />
             </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/admin"
+          element={
+            <AdminRoute>
+              <AdminDashboard />
+            </AdminRoute>
           }
         />
       </Routes>

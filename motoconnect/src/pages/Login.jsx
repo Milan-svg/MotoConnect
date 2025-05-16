@@ -7,34 +7,12 @@ import AuthForm from "../components/AuthForm";
 import toast from "react-hot-toast";
 function Login() {
   const navigate = useNavigate();
-  const dispatch = useDispatch();
-
-  // run listentoauthchanges on startup, firebase func that checks if a user is logged in, and runs the callback func we pass.
-  useEffect(() => {
-    const unsubscribe = listenToAuthChanges((user) => {
-      // dont have to fetch user on startup from anywhere, firebase handles that.
-      if (!user) {
-        dispatch(clearUser());
-      } else {
-        dispatch(
-          setUser({
-            id: user.uid,
-            userName: user.displayName || "Anonymous",
-            email: user.email,
-          })
-        );
-      }
-    });
-
-    return () => unsubscribe();
-  }, []);
 
   const handleLoginSubmit = async (email, password) => {
     //email password come from authform.
     try {
       const userDetails = await loginUser(email, password); // loginUser is helper for firebase login func. sends data to firebase., logs u in on the server., returns user details which well pass on to redux memory.
       console.log("User logged in:", userDetails.user);
-      dispatch(setUser(userDetails.user));
       toast.success("Logged in successfully!");
       navigate("/");
     } catch (err) {

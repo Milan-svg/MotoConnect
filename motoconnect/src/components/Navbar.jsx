@@ -5,7 +5,7 @@ import { logoutUser } from "../firebase/authHelpers";
 import { clearUser } from "../redux/authSlice";
 import toast from "react-hot-toast";
 function Navbar() {
-  const user = useSelector((state) => state.auth.user);
+  const { user, isAuthReady } = useSelector((state) => state.auth);
   const dispatch = useDispatch();
 
   const handleLogout = async () => {
