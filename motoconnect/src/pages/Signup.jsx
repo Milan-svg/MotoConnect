@@ -1,14 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import {
-  createUserDoc,
-  listenToAuthChanges,
-  signupUser,
-} from "../firebase/authHelpers";
+import { listenToAuthChanges, signupUser } from "../firebase/authHelpers";
 import { useDispatch } from "react-redux";
 import { clearUser, setUser } from "../redux/authSlice";
 import AuthForm from "../components/AuthForm";
 import { toast } from "react-hot-toast";
+import { createUserDoc } from "../services/mechanicServices";
 function Signup() {
   const navigate = useNavigate();
 
@@ -25,6 +22,7 @@ function Signup() {
       navigate("/");
     } catch (err) {
       toast.error(err.message);
+      console.log(err);
     }
   };
 
