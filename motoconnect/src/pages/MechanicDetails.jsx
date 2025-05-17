@@ -12,9 +12,10 @@ import { getMechanicRatings } from "../services/mechanicServices";
 import { listenToAuthChanges } from "../firebase/authHelpers";
 import { useDispatch, useSelector } from "react-redux";
 import { setUser, clearUser } from "../redux/authSlice";
+import { Link } from "react-router-dom";
 function MechanicDetails() {
   const [mechanic, setMechanic] = useState(null);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const [ratings, setRatings] = useState([]);
   const { id } = useParams(); // get id from url
 
@@ -57,6 +58,7 @@ function MechanicDetails() {
   const user = useSelector((state) => state.auth.user);
 
   // fetching the said mechanic
+  // future improvement - just make a getMechanicById firebase function
   useEffect(() => {
     const getMechanic = async () => {
       try {
@@ -107,7 +109,6 @@ function MechanicDetails() {
       <div className="flex  flex-col md:flex-row items-start justify-between gap-4 mb-10">
         <div>
           <h1 className="text-3xl font-bold  ">{mechanic.name}</h1>
-          <p className="text-lg ">Location: {mechanic.location}</p>
           <p className="text-lg ">contact: {mechanic.contact}</p>
         </div>
         <div>
@@ -154,18 +155,21 @@ function MechanicDetails() {
             <p>Couldn't find ratings for this mechanic : /</p>
           )}
         </div>
-        {user && !ratings.find((rating) => rating.id === user.id) ? (
+        {!user ? (
+          <div className="text-blue-400 font-medium mt-6">
+            <Link to="/login">Please log in to submit a review.</Link>
+          </div>
+        ) : !ratings.find((rating) => rating.id === user.id) ? (
           <div className=" flex flex-col bg-white text-black p-6 rounded-xl shadow-md mt-8 w-full">
             <h3 className=" text-xl font-semibold mb-4 ">Write a Review</h3>
-            <form onSubmit={handleReviewSubmit}>
-              <input
-                type="text"
-                placeholder="write a review!"
-                className="rounded-lg "
+            <form onSubmit={handleReviewSubmit} className="space-y-4">
+              <textarea
+                placeholder="write a review.."
+                className="w-full border border-gray-300 p-2 rounded-md"
                 value={review}
                 onChange={(e) => setReview(e.target.value)}
               />
-              <div className="flex gap-1 mb-4">
+              <div className="flex gap-2 items-center mb-4">
                 {Array.from({ length: 5 }).map((_, index) => (
                   <span
                     key={index}
@@ -180,14 +184,17 @@ function MechanicDetails() {
               </div>
               <button
                 type="submit"
-                className="bg-gray-700 text-white py-1 px-2 rounded-lg"
+                className="bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-md"
               >
                 Submit
               </button>
             </form>
           </div>
         ) : (
-          <h2>you have already reviewed this Mechanic!</h2>
+          <div className="text-green-600 font-medium mt-6">
+            You've already submitted a review for this mechanic. Thanks for your
+            feedback!
+          </div>
         )}
       </div>
       {/* Map Section */}

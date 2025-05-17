@@ -12,7 +12,7 @@ function Login() {
     //email password come from authform.
     try {
       const userDetails = await loginUser(email, password); // loginUser is helper for firebase login func. sends data to firebase., logs u in on the server., returns user details which well pass on to redux memory.
-      console.log("User logged in:", userDetails.user);
+      //console.log("User logged in:", userDetails.user);
       toast.success("Logged in successfully!");
       navigate("/");
     } catch (err) {

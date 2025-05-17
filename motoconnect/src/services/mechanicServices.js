@@ -83,6 +83,16 @@ export async function getPendingMechanics() {
 
 //okay we first extracted the id to use it for deleting mechanic from pending mechanics, then we delete the id from the mechanic object we just spread {...mechanic} / mechanicData, we pass this mechanicData along with other required stuff to addDoc in the mechanics collection
 
+// export async function getMechanicById(id) {
+//   const mechRef = doc(db, "mechanics", id);
+//   const snapshot = await getDoc(mechRef);
+//   if (snapshot.exists()) {
+//     return { id: snapshot.id, ...snapshot.data() };
+//   } else {
+//     throw new Error("Mechanic not found");
+//   }
+// }
+
 export async function approveMechanic(mechanic) {
   const mechanicId = mechanic.id;
   const mechanicData = { ...mechanic };
