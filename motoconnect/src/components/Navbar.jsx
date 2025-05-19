@@ -28,7 +28,7 @@ function Navbar() {
       <div className="flex-1 flex items-center gap-2">
         <button
           onClick={handleBack}
-          className="btn btn-ghost btn-circle text-xl"
+          className="btn btn-ghost btn-square text-xl"
         >
           <ChevronLeft />
         </button>

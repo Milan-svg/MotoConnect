@@ -16,6 +16,7 @@ import AdminDashboard from "./pages/AdminDashboard";
 import { createUserDoc } from "./services/mechanicServices";
 import { AdminRoute } from "./components/AdminRoute";
 import { NotAuthorized } from "./components/NotAuthorized";
+import { LoadScript } from "@react-google-maps/api";
 
 function App() {
   const dispatch = useDispatch();
@@ -31,6 +32,7 @@ function App() {
 
     return () => unsubscribe();
   }, []);
+  const mapApi = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
 
   const isAuthReady = useSelector((state) => state.auth.isAuthReady);
 
@@ -44,38 +46,40 @@ function App() {
 
   return (
     <>
-      <Navbar />
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Signup />} />
-        <Route path="/mechanicslist" element={<MechanicsList />} />
-        <Route path="/mechanic/:id" element={<MechanicDetails />} />
-        <Route
-          path="/not-authorized"
-          element={
-            <ProtectedRoute>
-              <NotAuthorized />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/recommend"
-          element={
-            <ProtectedRoute>
-              <RecommendMechanic />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/admin"
-          element={
-            <AdminRoute>
-              <AdminDashboard />
-            </AdminRoute>
-          }
-        />
-      </Routes>
+      <LoadScript googleMapsApiKey={mapApi} libraries={["places"]}>
+        <Navbar />
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Signup />} />
+          <Route path="/mechanicslist" element={<MechanicsList />} />
+          <Route path="/mechanic/:id" element={<MechanicDetails />} />
+          <Route
+            path="/not-authorized"
+            element={
+              <ProtectedRoute>
+                <NotAuthorized />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/recommend"
+            element={
+              <ProtectedRoute>
+                <RecommendMechanic />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/admin"
+            element={
+              <AdminRoute>
+                <AdminDashboard />
+              </AdminRoute>
+            }
+          />
+        </Routes>
+      </LoadScript>
     </>
   );
 }

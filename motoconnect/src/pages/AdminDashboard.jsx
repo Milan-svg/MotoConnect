@@ -74,7 +74,9 @@ function AdminDashboard() {
             />
           ))
         ) : (
-          <div className="flex ">Nothing to approve here yet</div>
+          <div className="flex col-span-full justify-center items-center h-[600px] text-lg">
+            Nothing to approve here yet
+          </div>
         )}
       </div>
       {/* show sidebar here if mechanic is selected, isOpen ke basis pe */}

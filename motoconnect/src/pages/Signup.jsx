@@ -25,23 +25,34 @@ function Signup() {
       console.log(err);
     }
   };
+  //flex items-center justify-center bg-base-300
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-base-300">
-      <div className=" card w-full max-w-md shadow-2xl bg-base-100 p-5 ">
-        <h2 className="text-center text-2xl font-bold mb-5">Sign Up</h2>
-        <AuthForm
-          buttonText="SignUp"
-          handleSubmitAction={handleRegisterSubmit}
-        />
-        <p className="mt-2">
-          Already have a Motoconnect account?{" "}
-          <Link to="/login" className="text-blue-400">
-            Login
-          </Link>
-        </p>
+    <main className="h-screen w-full">
+      <div
+        className="absolute inset-0 bg-cover bg-center"
+        style={{
+          backgroundImage: `url('/stock-image.jpg')`,
+        }}
+      >
+        <div className="absolute inset-0 bg-black opacity-60" />
       </div>
-    </div>
+      <section className="flex h-full relative z-10 items-center justify-center  mx-2">
+        <div className="card w-full max-w-md shadow-2xl bg-base-100 p-5 ">
+          <h2 className="text-center text-2xl font-bold mb-5">Sign Up</h2>
+          <AuthForm
+            buttonText="SignUp"
+            handleSubmitAction={handleRegisterSubmit}
+          />
+          <p className="mt-2">
+            Already have a Motoconnect account?{" "}
+            <Link to="/login" className="text-blue-400">
+              Login
+            </Link>
+          </p>
+        </div>
+      </section>
+    </main>
   );
 }
 

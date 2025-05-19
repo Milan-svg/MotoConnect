@@ -9,9 +9,7 @@ import { MechanicGallery } from "../components/MechanicGallery";
 import { ReviewCard } from "../components/ReviewCard";
 import { MechanicMap } from "../components/MechanicMap";
 import { getMechanicRatings } from "../services/mechanicServices";
-import { listenToAuthChanges } from "../firebase/authHelpers";
-import { useDispatch, useSelector } from "react-redux";
-import { setUser, clearUser } from "../redux/authSlice";
+import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 function MechanicDetails() {
   const [mechanic, setMechanic] = useState(null);

@@ -20,7 +20,7 @@ export function AdminRoute({ children }) {
   if (!user) {
     return <Navigate to="/login" />;
   }
-  console.log(user.role);
+  //console.log(user.role);
   if (user.role !== "admin") {
     return <Navigate to="/not-authorized" />;
   }

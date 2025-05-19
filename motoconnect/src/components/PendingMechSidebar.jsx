@@ -1,5 +1,5 @@
 import React from "react";
-
+import { X } from "lucide-react";
 function PendingMechSidebar({
   mechanic,
   onClose,
@@ -18,7 +18,7 @@ function PendingMechSidebar({
 
       <div
         className={`fixed top-0 right-0 h-full w-full sm:w-[400px] max-w-full bg-gray-400 z-50 p-4 shadow-2xl overflow-y-auto border-l border-gray-300 rounded-l-2xl
-        transition-transform duration-300 ease-in-out transform ${
+        transition-transform duration-300 ease-in-out transform mt-2 ${
           isOpen ? "translate-x-0" : "translate-x-full"
         }`}
       >
@@ -29,10 +29,10 @@ function PendingMechSidebar({
             <div className="flex items-center justify-between mb-4 gap-4">
               <h2 className="text-xl font-semibold">Mechanic Details</h2>
               <button className="text-white hover:text-black" onClick={onClose}>
-                X
+                <X />
               </button>
             </div>
-            <div>
+            <div className="flex flex-col gap-3 mt-44">
               <div>
                 <h3 className="text-lg font-medium text-gray-700">Name</h3>
                 <p className="text-black">{mechanic.name}</p>
@@ -55,7 +55,9 @@ function PendingMechSidebar({
               </div>
               <div>
                 <h3 className="text-lg font-medium text-gray-700">Contact</h3>
-                <p className="text-black">{mechanic.phone || "Not provided"}</p>
+                <p className="text-black">
+                  {mechanic.contact || "Not provided"}
+                </p>
               </div>
             </div>
 
