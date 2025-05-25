@@ -54,7 +54,7 @@ function MechanicsList() {
           <input
             className="shadow-md rounded hover:shadow-lg w-full max-w-md"
             type="text"
-            placeholder="search mechanics..."
+            placeholder="search by name or location..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
           />
