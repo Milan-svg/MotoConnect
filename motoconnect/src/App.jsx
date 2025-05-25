@@ -18,8 +18,6 @@ import { createUserDoc } from "./services/mechanicServices";
 import { AdminRoute } from "./components/AdminRoute";
 import { NotAuthorized } from "./components/NotAuthorized";
 import { LoadScript } from "@react-google-maps/api";
-import { Footer } from "./components/Footer";
-
 function App() {
   const dispatch = useDispatch();
   useEffect(() => {
@@ -82,7 +80,6 @@ function App() {
           />
           <Route path="*" element={<NotFound />} />
         </Routes>
-        <Footer />
       </LoadScript>
     </>
   );
