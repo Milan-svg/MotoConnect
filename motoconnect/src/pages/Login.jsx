@@ -1,17 +1,31 @@
 import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { listenToAuthChanges, loginUser } from "../firebase/authHelpers";
+import {
+  listenToAuthChanges,
+  loginUser,
+  logoutUser,
+} from "../firebase/authHelpers";
 import { useDispatch } from "react-redux";
 import { clearUser, setUser } from "../redux/authSlice";
 import AuthForm from "../components/AuthForm";
 import toast from "react-hot-toast";
+import { auth } from "../firebase/firebase";
 function Login() {
   const navigate = useNavigate();
 
   const handleLoginSubmit = async (email, password) => {
     //email password come from authform.
     try {
-      const userDetails = await loginUser(email, password); // helper firebase login func. sends data to firebase., logs u in on the server., returns user details which well pass on to redux memory.
+      const userDetails = await loginUser(email, password);
+      await auth.currentUser.reload();
+      const verified = auth.currentUser.emailVerified;
+      if (!verified) {
+        toast.error("Please verify your email");
+        await logoutUser();
+        return;
+      }
+      // helper firebase login func. sends data to firebase., before it logs u in on the server,
+      //force reload, so whenevr login button is pressed, it checks if user has verified their creds, if not,log them out, if yes, redirect to"/", redux population of data will be handled in app.jsx.
       //console.log("User logged in:", userDetails.user);
       toast.success("Logged in successfully!");
       navigate("/");

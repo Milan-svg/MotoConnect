@@ -7,6 +7,7 @@ import MechanicsList from "./pages/MechanicsList";
 import MechanicDetails from "./pages/MechanicDetails";
 import RecommendMechanic from "./pages/RecommendMechanic";
 import ProtectedRoute from "./components/ProtectedRoute";
+import NotFound from "./pages/NotFound";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect } from "react";
@@ -17,12 +18,13 @@ import { createUserDoc } from "./services/mechanicServices";
 import { AdminRoute } from "./components/AdminRoute";
 import { NotAuthorized } from "./components/NotAuthorized";
 import { LoadScript } from "@react-google-maps/api";
+import { Footer } from "./components/Footer";
 
 function App() {
   const dispatch = useDispatch();
   useEffect(() => {
     const unsubscribe = listenToAuthChanges(async (user) => {
-      if (user) {
+      if (user && user.emailVerified) {
         const userDoc = await createUserDoc(user);
         dispatch(setUser(userDoc));
       } else {
@@ -78,7 +80,9 @@ function App() {
               </AdminRoute>
             }
           />
+          <Route path="*" element={<NotFound />} />
         </Routes>
+        <Footer />
       </LoadScript>
     </>
   );

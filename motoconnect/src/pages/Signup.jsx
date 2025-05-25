@@ -6,20 +6,17 @@ import { clearUser, setUser } from "../redux/authSlice";
 import AuthForm from "../components/AuthForm";
 import { toast } from "react-hot-toast";
 import { createUserDoc } from "../services/mechanicServices";
+import { sendEmailVerification } from "firebase/auth";
 function Signup() {
   const navigate = useNavigate();
-
-  const dispatch = useDispatch();
 
   const handleRegisterSubmit = async (email, password) => {
     try {
       const createdUser = await signupUser(email, password);
       //console.log("User created:", createdUser.user);
-      await createUserDoc(createdUser.user);
-      //createUserDoc me we pass user(from firebaseauth) & create user doc with id,email,role&username. dont need to dispatch anything to redux here cause were doing that in app.jsx. checking for user using listentoauthchanges, if auth detecs a user we dispatch to redux. in there if theres a doc avail, createuserdoc returns that and if there isnt, it makes one, and includes the standard id,email,role&username fields. thatswhy we use it in signup as user is being created so a doc needs to be made.
-      // 2 things being done here-> user doc create, and signupUser call, which triggers listentoauthchanges in the app.jsx, leading to successfull population of redux user.
-      toast.success("Sign up was successfull");
-      navigate("/");
+      await sendEmailVerification(createdUser.user);
+      toast.success("Check your email to verify your account");
+      navigate("/login");
     } catch (err) {
       toast.error(err.message);
       console.log(err);

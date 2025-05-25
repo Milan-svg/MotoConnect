@@ -144,6 +144,7 @@ export const createUserDoc = async (user) => {
     await setDoc(userRef, userData);
     return userData;
   }
+  return userSnap.data();
 
   return userSnap.data(); // return existing user
 };

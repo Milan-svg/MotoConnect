@@ -20,8 +20,8 @@ function Home() {
           Find Trusted Mechanics Near You
         </h1>
         <p className="text-lg md:text-2xl max-w-xl mb-6">
-          Verified, reviewed, and rated by real users. Get your vehicle fixed,
-          fast.
+          Verified, reviewed, and rated by real users. <br /> Get your vehicle
+          fixed,fast.
         </p>
 
         <Link to="/mechanicslist">

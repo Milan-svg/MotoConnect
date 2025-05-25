@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
 import { logoutUser } from "../firebase/authHelpers";
@@ -9,7 +9,15 @@ function Navbar() {
   const user = useSelector((state) => state.auth.user);
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const [menuOpen, setMenuOpen] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
+  const toggleMobileMenu = () => {
+    setMobileMenuOpen((prev) => !prev);
+  };
+
+  const closeMobileMenu = () => {
+    setMobileMenuOpen(false);
+  };
 
   const handleLogout = async () => {
     try {
@@ -23,6 +31,7 @@ function Navbar() {
   const handleBack = () => {
     navigate(-1);
   };
+
   return (
     <div className="navbar bg-base-100 shadow-md sticky top-0 z-50">
       <div className="flex-1 flex items-center gap-2">
@@ -75,66 +84,66 @@ function Navbar() {
       )}
 
       {/* Mobile Menu */}
-      <div className="dropdown dropdown-end md:hidden">
-        <label className="btn btn-ghost btn-circle" tabIndex={0}>
+      {/* Mobile Menu Trigger */}
+      <div className="md:hidden relative">
+        <button onClick={toggleMobileMenu} className="btn btn-ghost btn-square">
           <Menu />
-        </label>
-        <ul
-          className="menu menu-sm dropdown-content mt-3 z-[999] p-2 shadow bg-base-100 rounded-box w-52 max-w-xs"
-          tabIndex={0}
-        >
-          <li>
+        </button>
+
+        {mobileMenuOpen && (
+          <div className="absolute right-0 mt-3 z-[999] w-52 max-w-xs bg-base-100 shadow-lg rounded-box p-3 space-y-2">
             <Link
               to="/mechanicslist"
-              className="btn btn-ghost justify-start w-full "
+              onClick={closeMobileMenu}
+              className="btn btn-ghost justify-start w-full"
             >
               Find Mechanics
             </Link>
-          </li>
-          <li>
             <Link
               to="/recommend"
+              onClick={closeMobileMenu}
               className="btn btn-ghost justify-start w-full"
             >
               Add a Mechanic
             </Link>
-          </li>
-          {/* divide div */}
-          <li>
-            <div className="border-t my-2 border-gray-200" />
-          </li>
-          {/* mobie menu */}
-          {user ? (
-            <>
-              <li>
-                <span className="px-4 py-2 font-semibold block text-center truncate">
+
+            <div className="border-t border-gray-200 my-2" />
+
+            {user ? (
+              <>
+                <span className="block px-2 truncate font-semibold text-center">
                   {user.displayName || user.email}
                 </span>
-              </li>
-              <li>
                 <button
-                  onClick={handleLogout}
+                  onClick={() => {
+                    handleLogout();
+                    closeMobileMenu();
+                  }}
                   className="btn btn-error btn-sm w-full mt-1"
                 >
                   Logout
                 </button>
-              </li>
-            </>
-          ) : (
-            <>
-              <li className="mb-2">
-                <Link to="/login" className="btn btn-primary btn-sm w-full">
+              </>
+            ) : (
+              <>
+                <Link
+                  to="/login"
+                  className="btn btn-primary btn-sm w-full"
+                  onClick={closeMobileMenu}
+                >
                   Login
                 </Link>
-              </li>
-              <li>
-                <Link to="/register" className="btn bg-gray-700 btn-sm w-full">
+                <Link
+                  to="/register"
+                  className="btn bg-gray-700 btn-sm w-full"
+                  onClick={closeMobileMenu}
+                >
                   Register
                 </Link>
-              </li>
-            </>
-          )}
-        </ul>
+              </>
+            )}
+          </div>
+        )}
       </div>
     </div>
   );
