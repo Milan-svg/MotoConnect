@@ -1,6 +1,8 @@
-import React from "react";
+import React, { useState } from "react";
 import { useForm } from "react-hook-form";
+import { EyeOffIcon, EyeIcon } from "lucide-react";
 function AuthForm({ buttonText, handleSubmitAction }) {
+  const [showPass, setShowPass] = useState(false);
   const {
     register,
     handleSubmit,
@@ -10,6 +12,7 @@ function AuthForm({ buttonText, handleSubmitAction }) {
   const onSubmit = (data) => {
     handleSubmitAction(data.email, data.password);
   };
+  const togglePass = () => setShowPass((prev) => !prev);
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
@@ -21,7 +24,7 @@ function AuthForm({ buttonText, handleSubmitAction }) {
         <input
           type="email"
           placeholder="Enter your email"
-          className="input input-bordered"
+          className="input input-bordered w-full mt-2"
           {...register("email", {
             required: "Email is required",
             pattern: {
@@ -35,14 +38,14 @@ function AuthForm({ buttonText, handleSubmitAction }) {
         )}
       </div>
       {/* password */}
-      <div className="form-control mt-2 flex flex-col ">
+      <div className="form-control mt-2 flex flex-col relative">
         <label className="label">
           <span className="label-text">Password</span>
         </label>
         <input
-          type="password"
+          type={showPass ? "text" : "password"}
           placeholder="Enter your password"
-          className="input input-bordered "
+          className="input input-bordered w-full mt-2 pr-5"
           // value={password}
           // onChange={(e) => setPassword(e.target.value)}
           // required
@@ -54,6 +57,14 @@ function AuthForm({ buttonText, handleSubmitAction }) {
             },
           })}
         />
+        {/* toggleButton */}
+        <button
+          type="button"
+          onClick={togglePass}
+          className="absolute right-3 top-11"
+        >
+          {showPass ? <EyeOffIcon size={20} /> : <EyeIcon size={20} />}
+        </button>
         {errors.password && (
           <p className="text-red-500 mt-1 text-sm">{errors.password.message}</p>
         )}

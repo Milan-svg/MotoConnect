@@ -2,3 +2,13 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* Suppress native password reveal icon on mobile browsers */
+input[type="password"]::-ms-reveal,
+input[type="password"]::-webkit-textfield-decoration-container {
+  display: none !important;
+}
+
+input[type="password"]::-webkit-clear-button {
+  display: none;
+}

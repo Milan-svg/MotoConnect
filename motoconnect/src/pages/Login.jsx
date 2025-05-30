@@ -1,12 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import {
-  listenToAuthChanges,
-  loginUser,
-  logoutUser,
-} from "../firebase/authHelpers";
-import { useDispatch } from "react-redux";
-import { clearUser, setUser } from "../redux/authSlice";
+import { loginUser, logoutUser } from "../firebase/authHelpers";
 import AuthForm from "../components/AuthForm";
 import toast from "react-hot-toast";
 import { auth } from "../firebase/firebase";
@@ -16,7 +10,7 @@ function Login() {
   const handleLoginSubmit = async (email, password) => {
     //email password come from authform.
     try {
-      const userDetails = await loginUser(email, password);
+      await loginUser(email, password);
       await auth.currentUser.reload();
       const verified = auth.currentUser.emailVerified;
       if (!verified) {
@@ -50,7 +44,7 @@ function Login() {
       {/* center card */}
       <section className="flex h-full relative z-10 items-center justify-center  mx-2">
         <div className=" card w-full max-w-md shadow-2xl bg-base-100 p-5 ">
-          <h2 className="text-center text-2xl font-bold mb-5">LogIn</h2>
+          <h2 className="text-center text-2xl font-bold mb-5">Login</h2>
           {/* form */}
           <AuthForm buttonText="Login" handleSubmitAction={handleLoginSubmit} />
 
